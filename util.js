@@ -28,6 +28,7 @@ exports.createTestCase = (file, fn) => {
         window.document.querySelector(target).dispatchEvent(evt)
       }
 
+
       window.addEventListener('load', () => {
         const log = window.console.log = jest.fn(() => {})
         if (window.Vue) {

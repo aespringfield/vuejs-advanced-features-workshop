@@ -1,4 +1,5 @@
 require('../../util').createTestCase(__filename, (window, logs, done) => {
+
   const { convert } = window
 
   const obj = { foo: 123 }
