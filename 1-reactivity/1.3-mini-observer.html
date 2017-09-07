@@ -1,9 +1,60 @@
 <script>
-function observe (obj) {
-  // Implement this!
+
+class Dep {
+  constructor() {
+    this.subscribers = new Set();
+  }
+
+  depend() {
+    if (activeUpdate) {
+      // register the current active update
+      // as a subscriber
+      this.subscribers.add(activeUpdate);
+    }
+  }
+
+  notify() {
+    // run all subscriber functions
+    this.subscribers.forEach(fn => fn());
+  }
 }
 
+let activeUpdate;
+
+/*
+converts the properties in the received object and make them
+reactive. For each converted property, it gets assigned a `Dep`
+instance which keeps track of a list of subscribing update functions,
+and triggers them to re-run when its setter is invoked. */
+
+function observe (obj) {
+  Object.keys(obj).forEach(key => {
+    let internalVal = obj[key];
+    let dep = new Dep();
+
+    Object.defineProperty(obj, key, {
+      get() {
+        dep.depend();
+        return internalVal;
+      },
+      set(val) {
+        internalVal = val;
+        dep.notify();
+      }
+    })
+  })
+}
+/* 
+  takes an update function and re-runs it when properties that the
+  update function subscribes to have been mutated. An update function is said
+  to be "subscribing" to a property if it relies on that property during its
+  evaluation. */
 function autorun (update) {
-  // Implement this!
+  function wrappedUpdate() {
+    activeUpdate = wrappedUpdate;
+    update();
+    activeUpdate = null;
+  }
+  wrappedUpdate();
 }
 </script>
